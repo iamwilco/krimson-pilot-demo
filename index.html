@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Krimson Treasury Portal</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --crimson:#BE1636; --crimson-strong:#9A1230; --crimson-soft:#FBE4E9;
+  --purple:#5603AD; --purple-soft:#EDE0FA;
+  --bg:#FFFDFB; --bg-2:#F8F8F7; --bg-3:#F1F0EE; --panel:#FFFFFF;
+  --ink:#231F20; --ink-2:rgba(35,31,32,.72); --ink-3:rgba(35,31,32,.52); --ink-4:rgba(35,31,32,.36);
+  --line:rgba(35,31,32,.10); --line-2:rgba(35,31,32,.16);
+  --good:#1E7B4F; --good-soft:#E3F3EA; --warn:#A66A00; --warn-soft:#FBF0DA; --info:#2A5DB0; --info-soft:#E4ECFA;
+  --dark:#231F20; --on-dark:#FFFDFB; --on-dark-2:rgba(255,253,251,.66); --on-dark-line:rgba(255,255,255,.14);
+  --shadow-sm:0 1px 2px rgba(35,31,32,.06),0 1px 3px rgba(35,31,32,.04);
+  --shadow-md:0 4px 6px -1px rgba(35,31,32,.08),0 2px 4px -2px rgba(35,31,32,.05);
+  --shadow-lg:0 12px 24px -6px rgba(35,31,32,.12),0 4px 8px -2px rgba(35,31,32,.06);
+  --font-display:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;padding:32px 16px 48px}
+h1,h2,h3{margin:0;font-family:var(--font-display);letter-spacing:-.02em;line-height:1.15;color:var(--ink)}
+p{margin:0}
+button{font-family:inherit;font-size:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:2px solid var(--crimson);outline-offset:2px}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic.sm{width:14px;height:14px}
+.wrap{max-width:1280px;margin:0 auto}
+
+/* header */
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.head h1{font-size:28px;font-weight:800}
+.head p{color:var(--ink-3);font-size:13.5px;margin-top:4px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;border:1px solid var(--line-2);font-size:12px;font-weight:600;color:var(--ink-2);background:var(--panel)}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+.chip.good{color:var(--good);border-color:transparent;background:var(--good-soft)}
+.chip.warn{color:var(--warn);border-color:transparent;background:var(--warn-soft)}
+.chip.info{color:var(--info);border-color:transparent;background:var(--info-soft)}
+.chip.mute{color:var(--ink-3);background:var(--bg-3);border-color:transparent}
+
+.tabs{display:flex;gap:4px;flex-wrap:wrap;padding:4px;background:var(--bg-3);border-radius:10px;margin-bottom:14px}
+.tab{padding:9px 14px;border-radius:7px;font-weight:600;color:var(--ink-2)}
+.tab:hover{color:var(--ink)}
+.tab.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow-sm)}
+
+/* app frame */
+.frame{border:1px solid var(--line-2);border-radius:14px;overflow:hidden;background:var(--bg-2);box-shadow:var(--shadow-lg)}
+.app{display:grid;grid-template-columns:224px 1fr;min-height:620px}
+.side{background:var(--dark);color:var(--on-dark);padding:20px 14px;display:flex;flex-direction:column;gap:22px}
+.brandmark{display:flex;flex-direction:column;gap:3px;padding:4px 8px}
+.brandmark .name{font-family:var(--font-display);font-weight:800;font-size:17px;letter-spacing:.14em;text-transform:uppercase}
+.brandmark .unit{font-size:11.5px;color:var(--on-dark-2)}
+.brandmark .pilot{margin-top:8px;align-self:flex-start;font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:999px;border:1px solid var(--on-dark-line);color:var(--on-dark-2)}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:var(--on-dark-2);text-decoration:none;font-weight:500;font-size:13.5px}
+.nav a.on{background:rgba(255,255,255,.07);color:var(--on-dark)}
+.nav a.on .ic{color:#D43453}
+.side .who{margin-top:auto;padding:12px 10px;border-top:1px solid var(--on-dark-line);font-size:12.5px;color:var(--on-dark-2);display:grid;gap:2px}
+.side .who b{color:var(--on-dark);font-weight:600}
+.main{display:flex;flex-direction:column;min-width:0}
+.topbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 22px;background:var(--panel);border-bottom:1px solid var(--line)}
+.entity{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border:1px solid var(--line-2);border-radius:8px;font-weight:600;font-size:13px;background:var(--bg)}
+.entity .ic{color:var(--ink-3)}
+.topbar .spacer{flex:1}
+.topbar .bal{font-size:12.5px;color:var(--ink-3)}
+.topbar .bal b{font-family:var(--font-mono);color:var(--ink);font-weight:500}
+.content{padding:22px;display:grid;gap:18px;align-content:start}
+.content h2{font-size:20px;font-weight:700}
+.content .sub{color:var(--ink-3);font-size:13px;margin-top:3px}
+.head-row{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap}
+
+/* atoms */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:8px;font-weight:600;font-size:13.5px;white-space:nowrap;transition:background .2s,gap .2s}
+.btn.primary{background:var(--crimson);color:#fff}
+.btn.primary:hover{background:var(--crimson-strong);gap:12px}
+.btn.outline{border:1px solid var(--line-2);color:var(--ink);background:var(--panel)}
+.btn.outline:hover{border-color:var(--crimson)}
+.btn.ghost{color:var(--ink-2)}
+.btn.ghost:hover{background:var(--bg-3)}
+.btn.sm{padding:7px 12px;font-size:12.5px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:var(--shadow-sm)}
+.card.flush{padding:0;overflow:hidden}
+.card h3{font-size:14.5px;font-weight:700;letter-spacing:-.01em}
+.cap{font-size:12.5px;color:var(--ink-3)}
+.grid{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g21{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+.kpi{display:grid;gap:6px}
+.kpi .lbl{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.kpi .val{font-family:var(--font-display);font-weight:700;font-size:26px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi .val small{font-size:14px;font-weight:600;color:var(--ink-3);letter-spacing:0}
+.kpi .delta{font-size:12.5px;color:var(--ink-2)}
+.kpi .delta.good{color:var(--good)}
+.status{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:600}
+.status .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.status.paid{background:var(--good-soft);color:var(--good)}
+.status.pend{background:var(--warn-soft);color:var(--warn)}
+.status.sent{background:var(--info-soft);color:var(--info)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--bg-2)}
+td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.r,th.r{text-align:right}
+.tbl-wrap{overflow-x:auto}
+.field{display:grid;gap:6px}
+.field label{font-size:12.5px;font-weight:600;color:var(--ink-2)}
+.field .in{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--line-2);border-radius:8px;background:var(--bg);font-size:13.5px;min-height:40px}
+.field .in.locked{background:var(--bg-3);color:var(--ink-2)}
+.field .in .ic{color:var(--ink-3);margin-left:auto}
+.field .hint{font-size:12px;color:var(--ink-3)}
+.field .in .amt{font-family:var(--font-mono);font-size:15px}
+.attach{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px dashed var(--line-2);border-radius:8px;background:var(--bg-2);font-size:13px}
+.attach .ic{color:var(--crimson)}
+.attach .meta{color:var(--ink-3);font-size:12px;margin-left:auto}
+.quote{display:grid;gap:10px}
+.quote .row{display:flex;justify-content:space-between;gap:12px;font-size:13.5px}
+.quote .row .k{color:var(--ink-3)}
+.quote .row .v{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.quote .row.total{border-top:1px solid var(--line);padding-top:10px;font-weight:600}
+.compare{display:grid;gap:8px;padding:12px 14px;border-radius:10px;background:var(--bg-2);border:1px solid var(--line)}
+.compare .t{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.compare .line{display:flex;justify-content:space-between;gap:10px;font-size:13px}
+.compare .line .old{color:var(--ink-3);text-decoration:line-through}
+.compare .line .new{font-weight:600}
+.callout{display:flex;gap:10px;padding:12px 14px;border-radius:10px;font-size:13px;line-height:1.5}
+.callout .ic{flex:none;margin-top:2px}
+.callout.info{background:var(--info-soft)}
+.callout.info .ic{color:var(--info)}
+.callout.warn{background:var(--warn-soft)}
+.callout.warn .ic{color:var(--warn)}
+.list{display:grid;gap:8px;padding:0;margin:0;list-style:none}
+.list li{display:flex;gap:10px;align-items:flex-start;font-size:13.5px}
+.list li .ic{color:var(--good);margin-top:3px}
+.list li.no .ic{color:var(--ink-4)}
+.list li.no{color:var(--ink-3)}
+.pbar{height:8px;border-radius:999px;background:var(--bg-3);overflow:hidden}
+.pbar i{display:block;height:100%;border-radius:999px;background:var(--crimson)}
+.ent{display:grid;gap:8px;padding:16px;border-radius:12px;border:1px solid var(--line);background:var(--panel)}
+.ent .role{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.ent .nm{font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px}
+.ent .nm .ic{color:var(--crimson)}
+.ent .d{font-size:12.5px;color:var(--ink-2)}
+.ent.off{opacity:.62;background:var(--bg-2)}
+.ent.off .nm .ic{color:var(--ink-4)}
+.apr{display:grid;gap:12px;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.apr .top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.apr .amt{font-family:var(--font-display);font-weight:700;font-size:22px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.apr .amt small{font-size:13px;color:var(--ink-3);font-weight:600;letter-spacing:0}
+.apr .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 18px;font-size:12.5px}
+.apr .facts .k{color:var(--ink-3);display:block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.apr .checks{display:flex;flex-wrap:wrap;gap:8px}
+.apr .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.tl{position:relative;padding-left:26px}
+.tl::before{content:"";position:absolute;left:8px;top:10px;bottom:10px;width:2px;background:var(--line-2)}
+.tl .step{position:relative;padding:8px 0 14px}
+.tl .step::before{content:"";position:absolute;left:-23px;top:13px;width:12px;height:12px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px var(--panel)}
+.tl .step .t{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-weight:600;font-size:13.5px}
+.tl .step .t time{font-family:var(--font-mono);font-weight:400;font-size:12px;color:var(--ink-3)}
+.tl .step .d{font-size:12.5px;color:var(--ink-2)}
+.tl .step .d code{font-family:var(--font-mono);font-size:11.5px;background:var(--bg-3);padding:1px 6px;border-radius:4px}
+.tl.old::before{background:var(--line)}
+.tl.old .step::before{background:var(--bg-3);border:2px solid var(--line-2);box-shadow:0 0 0 3px var(--bg-2)}
+.tl.old .step.hold::before{background:var(--warn-soft);border-color:var(--warn)}
+.receipt{display:grid;gap:8px;font-size:13px}
+.receipt .row{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)}
+.receipt .row:last-child{border-bottom:0}
+.receipt .k{color:var(--ink-3)}
+.receipt .v{font-family:var(--font-mono);font-size:12.5px;text-align:right;word-break:break-all}
+.chart{position:relative}
+.chart svg{width:100%;height:auto;display:block}
+.chart .tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12px;padding:6px 9px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-110%);box-shadow:var(--shadow-md);opacity:0;transition:opacity .15s}
+.chart .tip.on{opacity:1}
+.chart .tip b{font-family:var(--font-mono);font-weight:500}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin-top:8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:6px}
+
+/* under the hood */
+.hood{margin-top:28px;display:grid;gap:14px}
+.hood-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.hood-head h2{font-size:20px;font-weight:700}
+.legend-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;color:var(--ink-3)}
+.legend-row .chip{font-size:11.5px}
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.layer{display:grid;gap:10px;padding:16px;border-radius:12px;border:1px solid var(--line);background:var(--panel);align-content:start}
+.layer .who{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--crimson)}
+.layer.purple .who{color:var(--purple)}
+.layer h3{font-size:14.5px;font-weight:700}
+.layer ul{margin:0;padding-left:16px;font-size:13px;color:var(--ink-2);display:grid;gap:5px}
+.layer .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.foot{margin-top:28px;padding-top:14px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-3)}
+
+@media (max-width:1040px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .side{flex-direction:row;flex-wrap:wrap;align-items:center;gap:10px;padding:12px}
+  .side .nav{flex-direction:row;flex-wrap:wrap}
+  .side .who{margin:0;border:0;padding:0;margin-left:auto}
+  .g3,.g21{grid-template-columns:1fr}
+}
+@media (max-width:560px){.g4,.g2,.flow{grid-template-columns:1fr}.tabs{display:grid;grid-template-columns:1fr 1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
+[hidden]{display:none !important}
+</style>
+</head>
+<body>
+
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></symbol>
+  <symbol id="i-dash" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+  <symbol id="i-plane" viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></symbol>
+  <symbol id="i-bank" viewBox="0 0 24 24"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+</svg>
+
+<div class="wrap">
+
+  <header class="head">
+    <div>
+      <h1>Krimson Treasury Portal</h1>
+      <p>Prototype sketch v0.1. Ethiopia corridor pilot, finance-team view. Names, amounts and fees are examples.</p>
+    </div>
+    <span class="chip warn"><span class="dot"></span>Internal draft, 24 September 2026</span>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Screens">
+    <button class="tab on" role="tab" data-screen="overview">Overview</button>
+    <button class="tab" role="tab" data-screen="pay">Pay a vendor</button>
+    <button class="tab" role="tab" data-screen="approve">Approvals</button>
+    <button class="tab" role="tab" data-screen="track">Track a payment</button>
+    <button class="tab" role="tab" data-screen="report">Pilot report</button>
+  </nav>
+
+  <div class="frame">
+    <div class="app">
+      <aside class="side">
+        <div class="brandmark">
+          <div class="name">Krimson</div>
+          <div class="unit">Financial Services</div>
+          <span class="pilot">Treasury pilot</span>
+        </div>
+        <nav class="nav" aria-label="App navigation">
+          <a href="#overview" data-nav="overview" class="on"><svg class="ic"><use href="#i-dash"/></svg>Overview</a>
+          <a href="#pay" data-nav="pay"><svg class="ic"><use href="#i-send"/></svg>Payments</a>
+          <a href="#approve" data-nav="approve"><svg class="ic"><use href="#i-users"/></svg>Approvals</a>
+          <a href="#track" data-nav="track"><svg class="ic"><use href="#i-clock"/></svg>Activity</a>
+          <a href="#report" data-nav="report"><svg class="ic"><use href="#i-chart"/></svg>Reports</a>
+          <a href="#overview" data-nav="none"><svg class="ic"><use href="#i-settings"/></svg>Settings</a>
+        </nav>
+        <div class="who"><b>Finance user</b><span>Malta trading entity</span></div>
+      </aside>
+
+      <div class="main">
+        <div class="topbar">
+          <span class="entity"><svg class="ic"><use href="#i-building"/></svg>Krimson Malta trading entity<svg class="ic sm"><use href="#i-chev"/></svg></span>
+          <span class="chip mute">Corridor: Malta to Ethiopia</span>
+          <span class="spacer"></span>
+          <span class="bal">Available to pay <b>USD 186,400.00</b></span>
+        </div>
+
+        <!-- OVERVIEW -->
+        <section class="content" data-screen="overview">
+          <div class="head-row">
+            <div><h2>Overview</h2><p class="sub">Pilot day 12 of 30. Amounts in USD.</p></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn outline"><svg class="ic"><use href="#i-bank"/></svg>Fund the pool</button><button class="btn primary">Pay a vendor<svg class="ic"><use href="#i-arrow"/></svg></button></div>
+          </div>
+          <div class="grid g4">
+            <div class="card kpi"><span class="lbl">Available to pay</span><span class="val">186,400<small>.00</small></span><span class="delta">Funded by wire from the UK account</span></div>
+            <div class="card kpi"><span class="lbl">In transit</span><span class="val">50,000<small>.00</small></span><span class="delta">Wire sent yesterday, expected today</span></div>
+            <div class="card kpi"><span class="lbl">Paid out this pilot</span><span class="val">212,750<small>.00</small></span><span class="delta">5 vendor payments, all in ETB</span></div>
+            <div class="card kpi"><span class="lbl">Average time to vendor</span><span class="val">1.3 <small>days</small></span><span class="delta good">Current route: 2 to 4 weeks</span></div>
+          </div>
+          <div class="grid g21">
+            <div class="card flush">
+              <div style="padding:16px 18px 10px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h3>Recent payments</h3><button class="btn ghost sm">View all<svg class="ic sm"><use href="#i-arrow"/></svg></button></div>
+              <div class="tbl-wrap"><table>
+                <thead><tr><th>Payee</th><th class="r">Sent (USD)</th><th class="r">Received</th><th>Status</th><th class="r">Time to vendor</th></tr></thead>
+                <tbody>
+                  <tr><td>Ground handling supplier, Addis Ababa<br><span class="cap">KRM-0007, INV-0912</span></td><td class="r mono">42,500.00</td><td class="r mono">ETB</td><td><span class="status paid"><span class="dot"></span>Paid out</span></td><td class="r mono">4h 53m</td></tr>
+                  <tr><td>Fuel supplier, Addis Ababa<br><span class="cap">KRM-0006, INV-0899</span></td><td class="r mono">61,200.00</td><td class="r mono">ETB</td><td><span class="status paid"><span class="dot"></span>Paid out</span></td><td class="r mono">1d 2h</td></tr>
+                  <tr><td>Catering supplier, Addis Ababa<br><span class="cap">KRM-0005, INV-0887</span></td><td class="r mono">18,050.00</td><td class="r mono">ETB</td><td><span class="status paid"><span class="dot"></span>Paid out</span></td><td class="r mono">6h 10m</td></tr>
+                  <tr><td>Ground handling supplier, Addis Ababa<br><span class="cap">KRM-0008, INV-0921</span></td><td class="r mono">47,800.00</td><td class="r mono">ETB</td><td><span class="status pend"><span class="dot"></span>Awaiting approval</span></td><td class="r mono">pending</td></tr>
+                  <tr><td>Maintenance parts, Addis Ababa<br><span class="cap">KRM-0009, INV-0923</span></td><td class="r mono">9,400.00</td><td class="r mono">ETB</td><td><span class="status sent"><span class="dot"></span>Sent to payout partner</span></td><td class="r mono">running</td></tr>
+                </tbody>
+              </table></div>
+            </div>
+            <div class="grid" style="align-content:start">
+              <div class="card" style="display:grid;gap:12px">
+                <h3>Pilot scope</h3>
+                <ul class="list">
+                  <li><svg class="ic sm"><use href="#i-check"/></svg><span>Malta entity pays Ethiopian vendors, business to business, invoice attached</span></li>
+                  <li><svg class="ic sm"><use href="#i-check"/></svg><span>Pool cap USD 250,000. Single payment cap USD 100,000</span></li>
+                  <li><svg class="ic sm"><use href="#i-check"/></svg><span>10 payments, then a go or no-go review</span></li>
+                  <li class="no"><svg class="ic sm"><use href="#i-x"/></svg><span>Not in pilot: Kenya collections, permit fees, loyalty</span></li>
+                </ul>
+                <div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--ink-3);margin-bottom:6px"><span>5 of 10 payments</span><span>Day 12 of 30</span></div><div class="pbar"><i style="width:50%"></i></div></div>
+              </div>
+              <div class="card" style="display:grid;gap:10px">
+                <h3>Fund the pool</h3>
+                <p class="cap">Wire USD from the UK account. Available the next business day.</p>
+                <button class="btn outline sm" style="justify-self:start"><svg class="ic sm"><use href="#i-bank"/></svg>Wire instructions</button>
+              </div>
+            </div>
+          </div>
+          <div class="grid g3">
+            <div class="ent"><span class="role">Funding side</span><span class="nm"><svg class="ic"><use href="#i-building"/></svg>Malta trading entity</span><span class="d">Receives client USD as today. Funds the pool by wire. Pays vendors.</span><span class="chip good" style="justify-self:start"><span class="dot"></span>In pilot</span></div>
+            <div class="ent"><span class="role">Payee side</span><span class="nm"><svg class="ic"><use href="#i-plane"/></svg>Ethiopia operating entity</span><span class="d">Vendors receive ETB by bank transfer. Operations team confirms delivery.</span><span class="chip good" style="justify-self:start"><span class="dot"></span>In pilot</span></div>
+            <div class="ent off"><span class="role">Collections</span><span class="nm"><svg class="ic"><use href="#i-wallet"/></svg>Kenya clients</span><span class="d">Client receipts in KES stay on the current route. Needs a Kenya on-ramp partner.</span><span class="chip mute" style="justify-self:start">Phase 2</span></div>
+          </div>
+        </section>
+
+        <!-- PAY -->
+        <section class="content" data-screen="pay" hidden>
+          <div class="head-row">
+            <div><h2>Pay a vendor</h2><p class="sub">Ethiopia payouts are business to business and need an invoice.</p></div>
+            <span class="chip mute">Draft KRM-0010</span>
+          </div>
+          <div class="grid g21">
+            <div class="card" style="display:grid;gap:16px">
+              <div class="field"><label for="f-payee">Payee</label><div class="in" id="f-payee"><svg class="ic sm" style="margin:0;color:var(--crimson)"><use href="#i-building"/></svg>Ground handling supplier, Addis Ababa<span class="cap" style="margin-left:4px">Bank account on file</span><svg class="ic sm"><use href="#i-chev"/></svg></div></div>
+              <div class="grid g2">
+                <div class="field"><label for="f-amt">You send</label><div class="in" id="f-amt"><span class="amt">42,500.00</span><span class="cap">USD</span></div></div>
+                <div class="field"><label for="f-cur">Vendor receives</label><div class="in locked" id="f-cur"><span class="amt">ETB</span><span class="cap">bank transfer</span></div><span class="hint">Rate shown before you confirm.</span></div>
+              </div>
+              <div class="field"><label>Invoice</label><div class="attach"><svg class="ic"><use href="#i-file"/></svg><span>INV-2026-0931.pdf</span><span class="meta">Required</span></div></div>
+              <div class="grid g2">
+                <div class="field"><label for="f-purpose">Purpose of payment</label><div class="in" id="f-purpose">Ground handling services<svg class="ic sm"><use href="#i-chev"/></svg></div></div>
+                <div class="field"><label for="f-source">Source of funds</label><div class="in" id="f-source">Client receipts, Malta trading entity<svg class="ic sm"><use href="#i-chev"/></svg></div></div>
+              </div>
+              <div class="field"><label for="f-note">Note to approver (optional)</label><div class="in" id="f-note" style="color:var(--ink-4)">Handling for the Nairobi to Addis rotation, week 38</div></div>
+              <div class="callout info"><svg class="ic"><use href="#i-shield"/></svg><span>Two approvals above USD 25,000. Sanctions screening runs before the approver sees it.</span></div>
+            </div>
+            <div class="grid" style="align-content:start">
+              <div class="card quote">
+                <h3>Quote</h3>
+                <div class="row"><span class="k">You send</span><span class="v">USD 42,500.00</span></div>
+                <div class="row"><span class="k">Partner fee (example)</span><span class="v">USD 255.00</span></div>
+                <div class="row"><span class="k">Rate</span><span class="v">at execution</span></div>
+                <div class="row total"><span class="k">Vendor receives</span><span class="v">ETB</span></div>
+                <div class="row"><span class="k">Expected arrival</span><span class="v" style="color:var(--good)">Same business day</span></div>
+                <button class="btn primary" style="width:100%">Send for approval<svg class="ic"><use href="#i-arrow"/></svg></button>
+              </div>
+              <div class="compare">
+                <span class="t">Same payment on the current route</span>
+                <div class="line"><span>Conversions</span><span><span class="old">2 to 3</span> <span class="new">1</span></span></div>
+                <div class="line"><span>UK bank review</span><span><span class="old">2 to 4 weeks</span> <span class="new">none</span></span></div>
+                <div class="line"><span>Birr held early</span><span><span class="old">weeks</span> <span class="new">converted when due</span></span></div>
+                <div class="line"><span>Vendor paid</span><span><span class="old">day 15 to 30</span> <span class="new">day 0 to 1</span></span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- APPROVALS -->
+        <section class="content" data-screen="approve" hidden>
+          <div class="head-row">
+            <div><h2>Approvals</h2><p class="sub">Signed in as approver, group CFO.</p></div>
+            <span class="chip warn"><span class="dot"></span>2 waiting</span>
+          </div>
+          <div class="grid g21">
+            <div class="grid">
+              <div class="apr">
+                <div class="top">
+                  <div><div class="amt">USD 47,800<small>.00</small></div><div class="cap">Ground handling supplier, Addis Ababa. Receives ETB.</div></div>
+                  <span class="status pend"><span class="dot"></span>Second approval needed</span>
+                </div>
+                <div class="facts">
+                  <div><span class="k">Submitted by</span>Finance user, Malta</div>
+                  <div><span class="k">First approval</span>Head of KFS, 08:52</div>
+                  <div><span class="k">Invoice</span>INV-0921</div>
+                  <div><span class="k">Purpose</span>Ground handling services</div>
+                  <div><span class="k">Pool after payment</span><span class="mono">USD 138,600.00</span></div>
+                  <div><span class="k">Reference</span><span class="mono">KRM-0008</span></div>
+                </div>
+                <div class="checks">
+                  <span class="chip good"><svg class="ic sm"><use href="#i-check"/></svg>Sanctions screening passed</span>
+                  <span class="chip good"><svg class="ic sm"><use href="#i-check"/></svg>Within single payment cap</span>
+                  <span class="chip good"><svg class="ic sm"><use href="#i-check"/></svg>Payee verified</span>
+                </div>
+                <div class="actions"><button class="btn ghost">Return with note</button><button class="btn outline"><svg class="ic sm"><use href="#i-file"/></svg>Open invoice</button><button class="btn primary"><svg class="ic sm"><use href="#i-check"/></svg>Approve</button></div>
+              </div>
+              <div class="apr">
+                <div class="top">
+                  <div><div class="amt">USD 9,400<small>.00</small></div><div class="cap">Maintenance parts, Addis Ababa. Receives ETB.</div></div>
+                  <span class="status pend"><span class="dot"></span>One approval needed</span>
+                </div>
+                <div class="facts">
+                  <div><span class="k">Submitted by</span>Finance user, Malta</div>
+                  <div><span class="k">Invoice</span>INV-0923</div>
+                  <div><span class="k">Purpose</span>Aircraft parts and maintenance</div>
+                  <div><span class="k">Reference</span><span class="mono">KRM-0009</span></div>
+                </div>
+                <div class="checks">
+                  <span class="chip good"><svg class="ic sm"><use href="#i-check"/></svg>Sanctions screening passed</span>
+                  <span class="chip good"><svg class="ic sm"><use href="#i-check"/></svg>Payee verified</span>
+                </div>
+                <div class="actions"><button class="btn ghost">Return with note</button><button class="btn outline"><svg class="ic sm"><use href="#i-file"/></svg>Open invoice</button><button class="btn primary"><svg class="ic sm"><use href="#i-check"/></svg>Approve</button></div>
+              </div>
+            </div>
+            <div class="card" style="display:grid;gap:10px;align-self:start">
+              <h3>Pilot limits</h3>
+              <ul class="list">
+                <li><svg class="ic sm"><use href="#i-check"/></svg><span>Single payment cap USD 100,000</span></li>
+                <li><svg class="ic sm"><use href="#i-check"/></svg><span>Two approvals above USD 25,000</span></li>
+                <li><svg class="ic sm"><use href="#i-check"/></svg><span>Ethiopia payouts to businesses only, invoice required</span></li>
+                <li><svg class="ic sm"><use href="#i-check"/></svg><span>Approvers: Head of KFS, group CFO</span></li>
+              </ul>
+              <p class="cap">Set with the issuer's compliance officer at onboarding.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- TRACK -->
+        <section class="content" data-screen="track" hidden>
+          <div class="head-row">
+            <div><h2>Payment KRM-0007</h2><p class="sub">USD 42,500.00 to ground handling supplier, Addis Ababa. Received in ETB.</p></div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="status paid"><span class="dot"></span>Paid out</span><button class="btn outline sm"><svg class="ic sm"><use href="#i-download"/></svg>Receipt (PDF)</button></div>
+          </div>
+          <div class="grid g21">
+            <div class="grid">
+              <div class="card" style="display:grid;gap:14px">
+                <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline"><h3>Pilot rail</h3><span class="cap">East Africa Time. Total 4 hours 53 minutes.</span></div>
+                <div class="tl">
+                  <div class="step"><div class="t"><span>Submitted</span><time>09:12</time></div><div class="d">Finance user, Malta. Invoice INV-0912 attached.</div></div>
+                  <div class="step"><div class="t"><span>Approved</span><time>09:40</time></div><div class="d">Head of KFS 09:21, group CFO 09:40.</div></div>
+                  <div class="step"><div class="t"><span>Screened</span><time>09:41</time></div><div class="d">Sanctions and monitoring checks passed.</div></div>
+                  <div class="step"><div class="t"><span>Funded from pool</span><time>09:42</time></div><div class="d">USD 42,500.00 reserved. Settlement reference <code>8f3a…c21e</code></div></div>
+                  <div class="step"><div class="t"><span>Sent to payout partner</span><time>09:43</time></div><div class="d">Pre-funded ETB payout initiated. Partner reference <code>ENC-771204</code></div></div>
+                  <div class="step"><div class="t"><span>Paid out in ETB</span><time>14:05</time></div><div class="d">Bank transfer to the vendor account completed.</div></div>
+                  <div class="step"><div class="t"><span>Vendor confirmed</span><time>14:20</time></div><div class="d">Ethiopia operating entity marked the invoice settled.</div></div>
+                </div>
+              </div>
+              <div class="card" style="display:grid;gap:14px;background:var(--bg-2)">
+                <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline"><h3 style="color:var(--ink-2)">Current route, same payment</h3><span class="cap">From the 29 April walkthrough. About 20 days.</span></div>
+                <div class="tl old">
+                  <div class="step"><div class="t"><span>Client converts to USD or EUR</span><time>day 0</time></div><div class="d">First conversion.</div></div>
+                  <div class="step"><div class="t"><span>Funds reach Malta trading entity</span><time>day 2</time></div></div>
+                  <div class="step"><div class="t"><span>Internal sale to Ethiopia entity</span><time>day 3</time></div></div>
+                  <div class="step hold"><div class="t"><span>UK bank compliance review</span><time>day 3 to 17</time></div><div class="d">Inbound Africa flow held for review.</div></div>
+                  <div class="step"><div class="t"><span>Portion converted to birr, held for tax</span><time>day 18</time></div><div class="d">Second conversion.</div></div>
+                  <div class="step"><div class="t"><span>Vendor paid</span><time>day 20</time></div><div class="d">Often in a mix of currencies.</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="card receipt" style="align-self:start">
+              <h3 style="margin-bottom:4px">Receipt</h3>
+              <div class="row"><span class="k">Reference</span><span class="v">KRM-0007</span></div>
+              <div class="row"><span class="k">Sent</span><span class="v">USD 42,500.00</span></div>
+              <div class="row"><span class="k">Partner fee</span><span class="v">USD 255.00 (example)</span></div>
+              <div class="row"><span class="k">Rate</span><span class="v">at execution</span></div>
+              <div class="row"><span class="k">Received</span><span class="v">ETB, vendor bank</span></div>
+              <div class="row"><span class="k">Invoice</span><span class="v">INV-2026-0912</span></div>
+              <div class="row"><span class="k">Partner ref</span><span class="v">ENC-771204</span></div>
+              <div class="row"><span class="k">Settlement ref</span><span class="v">8f3a…c21e</span></div>
+              <div class="row"><span class="k">Approvals</span><span class="v">2 of 2</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- REPORT -->
+        <section class="content" data-screen="report" hidden>
+          <div class="head-row">
+            <div><h2>Pilot report</h2><p class="sub">Projected to the end of the 30-day pilot at ten payments. Example figures.</p></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn outline sm"><svg class="ic sm"><use href="#i-download"/></svg>Export CSV</button><button class="btn outline sm"><svg class="ic sm"><use href="#i-download"/></svg>Export PDF</button></div>
+          </div>
+          <div class="grid g4">
+            <div class="card kpi"><span class="lbl">Payments</span><span class="val">10</span><span class="delta">USD 418,000 total</span></div>
+            <div class="card kpi"><span class="lbl">Average time to vendor</span><span class="val">1.2 <small>days</small></span><span class="delta good">Current route: 2 to 4 weeks</span></div>
+            <div class="card kpi"><span class="lbl">Conversions per payment</span><span class="val">1</span><span class="delta good">Current route: 2 to 3</span></div>
+            <div class="card kpi"><span class="lbl">Cash available earlier</span><span class="val">~19 <small>days</small></span><span class="delta">Per payment, against a 20-day route</span></div>
+          </div>
+          <div class="grid g21">
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline;margin-bottom:6px"><h3>Days from approval to vendor, per payment</h3><span class="cap">Dashed line: current route, 14 days</span></div>
+              <div class="chart" id="chart"></div>
+              <div class="legend"><span><i style="background:var(--crimson)"></i>Pilot payments</span><span><i style="background:transparent;border-top:2px dashed var(--ink-3);height:0;vertical-align:3px"></i>Current route</span></div>
+            </div>
+            <div class="grid" style="align-content:start">
+              <div class="card" style="display:grid;gap:10px">
+                <h3>Measured</h3>
+                <ul class="list">
+                  <li><svg class="ic sm"><use href="#i-check"/></svg><span>Settlement time on the Malta to Ethiopia leg, on real invoices</span></li>
+                  <li><svg class="ic sm"><use href="#i-check"/></svg><span>Conversions and fees per payment against the current route</span></li>
+                  <li><svg class="ic sm"><use href="#i-check"/></svg><span>Approvals, invoices and exports in the finance team's routine</span></li>
+                  <li><svg class="ic sm"><use href="#i-check"/></svg><span>Working capital freed while the UK bank review is bypassed</span></li>
+                </ul>
+              </div>
+              <div class="card" style="display:grid;gap:10px">
+                <h3>Left for phase two</h3>
+                <ul class="list">
+                  <li class="no"><svg class="ic sm"><use href="#i-x"/></svg><span>Collecting KES from clients in Kenya</span></li>
+                  <li class="no"><svg class="ic sm"><use href="#i-x"/></svg><span>The birr tax mandate leg</span></li>
+                  <li class="no"><svg class="ic sm"><use href="#i-x"/></svg><span>Permit fees</span></li>
+                  <li class="no"><svg class="ic sm"><use href="#i-x"/></svg><span>Krimson-branded coin or loyalty points</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="card flush">
+            <div style="padding:16px 18px 10px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h3>Audit trail</h3></div>
+            <div class="tbl-wrap"><table>
+              <thead><tr><th>Ref</th><th>Payee</th><th class="r">USD</th><th>Invoice</th><th>Approvals</th><th>Partner ref</th><th>Settlement ref</th><th class="r">To vendor</th></tr></thead>
+              <tbody>
+                <tr><td class="mono">KRM-0001</td><td>Ground handling, Addis</td><td class="r mono">38,000.00</td><td class="mono">INV-0861</td><td>2 of 2</td><td class="mono">ENC-770912</td><td class="mono">b21c…9e40</td><td class="r mono">1.1 d</td></tr>
+                <tr><td class="mono">KRM-0002</td><td>Fuel, Addis</td><td class="r mono">55,400.00</td><td class="mono">INV-0868</td><td>2 of 2</td><td class="mono">ENC-770955</td><td class="mono">3d7f…a118</td><td class="r mono">0.9 d</td></tr>
+                <tr><td class="mono">KRM-0003</td><td>Catering, Addis</td><td class="r mono">12,600.00</td><td class="mono">INV-0874</td><td>1 of 1</td><td class="mono">ENC-771003</td><td class="mono">e90a…4c7b</td><td class="r mono">1.4 d</td></tr>
+                <tr><td class="mono">KRM-0004</td><td>Ground handling, Addis</td><td class="r mono">44,900.00</td><td class="mono">INV-0880</td><td>2 of 2</td><td class="mono">ENC-771088</td><td class="mono">17ab…d2e6</td><td class="r mono">2.0 d</td></tr>
+                <tr><td class="mono">KRM-0005</td><td>Catering, Addis</td><td class="r mono">18,050.00</td><td class="mono">INV-0887</td><td>1 of 1</td><td class="mono">ENC-771130</td><td class="mono">7c44…f0a9</td><td class="r mono">0.8 d</td></tr>
+              </tbody>
+            </table></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- UNDER THE HOOD -->
+  <section class="hood">
+    <div class="hood-head">
+      <h2>Under the hood</h2>
+      <div class="legend-row"><span class="chip good"><span class="dot"></span>Live today</span><span class="chip warn"><span class="dot"></span>Partner-stated, untested</span><span class="chip info"><span class="dot"></span>To build</span><span class="chip mute">Manual today</span></div>
+    </div>
+    <div class="flow">
+      <div class="layer">
+        <span class="who">Krimson</span>
+        <h3>Finance team</h3>
+        <ul><li>Funds the pool by USD wire</li><li>Submits and approves payments in USD</li><li>Attaches invoice, purpose, source of funds</li><li>Holds no keys, tokens or exchange account</li></ul>
+        <div class="tags"><span class="chip mute">Onboarding packet</span></div>
+      </div>
+      <div class="layer purple">
+        <span class="who">Moneta Digital, issuer</span>
+        <h3>USDM under the hood</h3>
+        <ul><li>Verifies the Malta entity and owners</li><li>Mints USDM 1:1 against the wire, redeems on payout</li><li>Sanctions screening and monitoring</li><li>Passes verified identity to the payout partner</li></ul>
+        <div class="tags"><span class="chip good"><span class="dot"></span>Mint and redeem</span><span class="chip good"><span class="dot"></span>Monitoring</span><span class="chip mute">KYB, 6 to 10 days</span></div>
+      </div>
+      <div class="layer">
+        <span class="who">Encryptus, payout partner</span>
+        <h3>ETB and KES payouts</h3>
+        <ul><li>Pre-funded in stablecoin by the issuer</li><li>Ethiopia: business payments with invoice</li><li>Kenya: bank and mobile money</li><li>Needs amount, source of funds, purpose</li></ul>
+        <div class="tags"><span class="chip warn"><span class="dot"></span>Ethiopia, stated 16 July</span><span class="chip warn"><span class="dot"></span>Kenya, stated</span></div>
+      </div>
+      <div class="layer">
+        <span class="who">W3i Software</span>
+        <h3>Portal and operations</h3>
+        <ul><li>These five screens, roles, maker-checker</li><li>Payee book, limits, pilot cap</li><li>Tracking, receipts, exports</li><li>Reconciliation feed</li></ul>
+        <div class="tags"><span class="chip info"><span class="dot"></span>Portal, ~6 weeks to MVP</span><span class="chip info"><span class="dot"></span>Partner API, 3 to 6 weeks</span></div>
+      </div>
+    </div>
+    <div class="callout warn"><svg class="ic"><use href="#i-alert"/></svg><span>Ethiopia payout is stated by Encryptus, not tested. Sandbox, EDD form and compliance call open since 16 July. One test payout to Addis Ababa has to land before the pilot starts.</span></div>
+  </section>
+
+  <footer class="foot">Internal draft, 24 September 2026. Not shared with Krimson. Companion: Partners/Krimson/03 - Pilot Sketch v0.1.</footer>
+</div>
+
+<script>
+(function(){
+  var screens=['overview','pay','approve','track','report'];
+  var tabs=document.querySelectorAll('.tab');
+  var navs=document.querySelectorAll('[data-nav]');
+  function show(id){
+    if(screens.indexOf(id)<0) id='overview';
+    document.querySelectorAll('section[data-screen]').forEach(function(s){s.hidden=(s.getAttribute('data-screen')!==id)});
+    tabs.forEach(function(t){var on=t.getAttribute('data-screen')===id;t.classList.toggle('on',on);t.setAttribute('aria-selected',on?'true':'false')});
+    navs.forEach(function(a){a.classList.toggle('on',a.getAttribute('data-nav')===id)});
+    if(id==='report') drawChart();
+  }
+  function go(id){show(id);try{history.replaceState(null,'','#'+id)}catch(e){}}
+  tabs.forEach(function(t){t.addEventListener('click',function(){go(t.getAttribute('data-screen'))})});
+  navs.forEach(function(a){a.addEventListener('click',function(ev){ev.preventDefault();var id=a.getAttribute('data-nav');if(id!=='none')go(id)})});
+  show((location.hash||'').replace('#','')||'overview');
+  window.addEventListener('hashchange',function(){show((location.hash||'').replace('#',''))});
+
+  var drawn=false;
+  function drawChart(){
+    if(drawn) return; drawn=true;
+    var data=[{r:'KRM-0001',d:1.1},{r:'KRM-0002',d:0.9},{r:'KRM-0003',d:1.4},{r:'KRM-0004',d:2.0},{r:'KRM-0005',d:0.8},{r:'KRM-0006',d:1.2},{r:'KRM-0007',d:0.2},{r:'KRM-0008',d:1.6},{r:'KRM-0009',d:1.0},{r:'KRM-0010',d:1.3}];
+    var ref=14, W=640, H=260, padL=40, padR=12, padT=16, padB=34;
+    var ih=H-padT-padB, iw=W-padL-padR, maxY=16, n=data.length;
+    var slot=iw/n, bw=Math.min(28,slot*0.55);
+    function y(v){return padT+ih-(v/maxY)*ih}
+    var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Days from approval to vendor per pilot payment against a fourteen day reference">';
+    [0,4,8,12,16].forEach(function(t){s+='<line x1="'+padL+'" x2="'+(W-padR)+'" y1="'+y(t)+'" y2="'+y(t)+'" stroke="#231F20" stroke-opacity="0.10"/><text x="'+(padL-8)+'" y="'+(y(t)+4)+'" text-anchor="end" font-size="11" fill="#231F20" fill-opacity="0.55" font-family="JetBrains Mono, monospace">'+t+'</text>'});
+    s+='<line x1="'+padL+'" x2="'+(W-padR)+'" y1="'+y(ref)+'" y2="'+y(ref)+'" stroke="#231F20" stroke-opacity="0.45" stroke-width="2" stroke-dasharray="5 5"/>';
+    s+='<text x="'+(W-padR)+'" y="'+(y(ref)-6)+'" text-anchor="end" font-size="11" fill="#231F20" fill-opacity="0.7" font-family="Inter, sans-serif">current route, 14 days</text>';
+    data.forEach(function(p,i){
+      var x=padL+slot*i+(slot-bw)/2, top=y(p.d);
+      s+='<g class="bar" data-i="'+i+'"><rect x="'+(padL+slot*i)+'" y="'+padT+'" width="'+slot+'" height="'+ih+'" fill="transparent"/><path d="M'+x+' '+y(0)+' V'+(top+4)+' a4 4 0 0 1 4 -4 h'+(bw-8)+' a4 4 0 0 1 4 4 V'+y(0)+' Z" fill="#BE1636"/></g>';
+      s+='<text x="'+(x+bw/2)+'" y="'+(H-padB+16)+'" text-anchor="middle" font-size="10" fill="#231F20" fill-opacity="0.55" font-family="JetBrains Mono, monospace">'+(i+1)+'</text>';
+    });
+    s+='<text x="'+(padL+iw/2)+'" y="'+(H-4)+'" text-anchor="middle" font-size="11" fill="#231F20" fill-opacity="0.55" font-family="Inter, sans-serif">payment number</text>';
+    s+='<text x="12" y="'+(padT+ih/2)+'" text-anchor="middle" font-size="11" fill="#231F20" fill-opacity="0.55" font-family="Inter, sans-serif" transform="rotate(-90 12 '+(padT+ih/2)+')">days</text>';
+    s+='</svg><div class="tip" id="tip"></div>';
+    var el=document.getElementById('chart'); el.innerHTML=s;
+    var tip=document.getElementById('tip');
+    el.querySelectorAll('.bar').forEach(function(g){
+      g.addEventListener('mouseenter',function(){var p=data[+g.getAttribute('data-i')];tip.innerHTML=p.r+' <b>'+p.d.toFixed(1)+' days</b>';tip.classList.add('on')});
+      g.addEventListener('mousemove',function(ev){var r=el.getBoundingClientRect();tip.style.left=(ev.clientX-r.left)+'px';tip.style.top=(ev.clientY-r.top)+'px'});
+      g.addEventListener('mouseleave',function(){tip.classList.remove('on')});
+    });
+  }
+})();
+</script>
+</body>
+</html>
